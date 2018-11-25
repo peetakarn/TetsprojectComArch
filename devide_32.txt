@@ -1,0 +1,40 @@
+	lw	0	1	div	# โหลด reg[1] = divisor(ตัวหาร)
+	lw	0	3	quot	# โหลด reg[3] = quotient(ตัวตั้ง)
+	lw	0	5	pos1	# โหลด reg[5] = pos1
+	nand	1	1	1
+	add	1	5	1	# ทำ 2-complement ของ divior
+	add	2	0	0	# ทำเศษ(reminder)ให้เป็น 0 reg[2] = 0
+start	lw	0	5	count	# โหลด reg[5] = count
+	beq	7	5	end	# เช็คว่าเกิน 8 รอบหรือยัง
+	lw	0	5	pos1	# โหลด reg[5] = pos1
+	add	7	5	7	# reg[7] เพิ่มจำนวนรอบขึ้น 1
+	add	2	2	2	# shift เศษ
+	add	3	3	3	# shift ตัวตั้ง
+	lw	0	5	firstbit# โหลด reg[5] = firstbit
+	nand	3	5	4
+	nand	4	4	4	# reg[4] เก็บค่า bit ที่ 32 (bitซ้ายสุด)
+	lw	0	5	clrbit	# โหลด reg[5] = clrbit
+	nand	3	5	3	#
+	nand	3	3	3	# เคลียร์ bit ที่เกิน
+	beq	4	0	skip	# เช็คว่า bit ซ้ายสุด เป็น 1 หรือ 0
+	lw	0	4	pos1	# โหลด reg[4] = pos1
+	add	2	4	2	# บวกค่า bit ขวาสุดของเศษ เพิ่มขึ้น 1
+skip	add	2	1	5	# reg[5] เก็บค่า เศษ-ตัวหาร
+	lw	0	4	signbit	# โหลด reg[4] = signbit
+	nand	5	4	6
+	nand	6	6	6	# เช็ค sign bit ของ เศษ-ตัวหาร
+	beq	6	0	addone	# เช็ค เศษ-ตัวหาร = 0 หรือไม่
+	beq	0	0	start	# กลับไปทำ start
+addone	lw	0	4	pos1	# reg[4] = pos1
+	add	3	4	3	# เศษ-ตัวหาร < 0
+	add	5	0	2	# เศษ = reg[5]
+	beq	0	0	start	# กลับไปทำ start
+end	halt
+clrbit	.fill	2147483647	# ค่า 2^31	
+signbit	.fill	1073741824	# ค่า 2^30
+firstbit.fill	2147483648	# ค่า 2^31-1		
+count	.fill	31
+pos1	.fill	1
+div	.fill	ตัวหาร 2
+quot	.fill	ตัวตั้ง 4
+				
